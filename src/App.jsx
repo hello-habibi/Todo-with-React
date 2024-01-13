@@ -1,34 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useEffect, useState } from 'react'
 import './App.css'
+import TodoForm from './comonents/TodoForm'
+import { TodoProvider } from './context/todoContext'
+import TodoItem from './comonents/TodoItem'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // all the state managements is here 
+  let [todos , setTodos] = useState([])
+
+  useEffect(()=>{
+    const todos = JSON.parse(localStorage.getItem('todos')) 
+    if(todos && todos.length > 0){
+      setTodos(todos)
+    }
+
+  },[])
+  useEffect(() =>{
+    localStorage.setItem('todos',JSON.stringify(todos))
+  }, [todos])
+// all the functon here 
+const addTodo =(todoMsg) =>{
+  const id =  Date.now();
+  setTodos((prev) => [{id:id,todoMsg:todoMsg , isFinished: false} , ...prev])
+}
+const deleteTodo = (id) =>{
+  setTodos((prev) => prev.filter((todo) => todo.id !=id ))
+}
+const editTodo = (id, newMsg) => {
+  setTodos((prevList) =>
+    prevList.map((todo) => (todo.id === id ? newMsg : todo))
+  );
+  console.log("msg edited");
+};
+const toggleComplete =(id)=>{
+  console.log("toggle is working");
+  setTodos((prevList) => prevList.map((todo) => todo.id ==id ? {...todo , isFinished : !todo.isFinished} : todo))
+}
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <TodoProvider value={ {todos , addTodo, deleteTodo, editTodo, toggleComplete }}>
+      <h1 className='text-center text-4xl font-bold text-yellow-400 capitalize pt-4'>Start Adding Your Work of Your Day 📝<br /> <span className='text-yellow-900'>Never forget anything 😏</span></h1>
+      <div id='todo-app' className='max-w-lg mx-auto pt-14'>
+        <div id='todo-form'>
+          <TodoForm />
+        </div>
+        <div id='todo-container' className='pt-4'>
+        {
+            todos.map((todo) => {
+              // console.log(todo);
+              return <TodoItem todo={todo} key={todo.id} />;
+  })
+}
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </TodoProvider>
+
   )
 }
 
