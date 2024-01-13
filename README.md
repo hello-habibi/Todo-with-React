@@ -1,4 +1,4 @@
-# Todo App with awsome Fuctionality 
+# Todo App with awsome Fuctionalities 
 ### Funtionality of the site are ....
 * Add your work ("Add" button or press "Enter")
 * Edit work ("✏️")
@@ -15,3 +15,4 @@
 * Context API
 * Tailwind CSS
 
+[Clice Here ](https://its-todo-habibi.netlify.app/)For Live Demo 
